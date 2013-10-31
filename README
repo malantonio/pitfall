@@ -1,0 +1,68 @@
+****************************
+****  PITFALL : README  ****
+****************************
+
+Pitfall is a php class designed to allow you to easily conduct a product search using
+Amazon.com's api and return the results in a easy-to-read (and, dare I say, keyute!)
+associative array.
+
+Using Pitfall is pretty straightforward and simple!
+
+
+    $pit = new Pitfall(PUBLIC_KEY, PRIVATE_KEY, ASSOCIATE_ID);
+
+
+Pitfall has one public method: search(). 
+
+
+    array search ( array $terms [, string $searchIndex = "Books"]) 
+
+
+search's $terms array needs to have a named key of either "Keywords", "Title", or "Author"
+(note that capitalization's pretty important, otherwise you'll just get empty values).
+
+
+    $pit->search(array("Keywords" => "moleskine year planner"));
+    $pit->search(array("Author" => "Stephen King"));
+    $pit->search(array("Title" => "the Dark Half"));
+
+
+the searchIndex variable defines the area of searching. Pitfall is set-up to to best serve
+searches within the "Books", "DVD", and "Music" indices.
+
+============================================================================================
+
+one other form of customization that Pitfall allows for is the specification of which values
+to return for each item result. These _are_ case-sensitive, so be careful. Those followed by
+(*) are the default values.
+  
+
+
+  Actor (returns an array)    NumberOfDiscs
+  Artist                      Publisher (*)
+  ASIN (*)                    Price (*)
+  AudioFormat                 ProductGroup
+  Author (*)                  ProductTypeName
+  Binding (*)                 RegionCode
+  Description (*)             ReleaseDate (*)
+  DetailPageURL               RunningTime
+  Director                    SmallImage (*)
+  Edition                     Studio
+  Genre                       Title (*)
+  ISBN (*)                    UPC
+  LargeImage
+  MediumImage(*)
+
+  (note! Binding doubles as Format for DVD/Music searches)
+
+
+
+changing which fields are returned is as easy as creating a new array using the above values 
+and changing the public fields variable before searching:
+
+
+    $pit->fields = array("Title", "Actor", "Director", "Binding", RunningTime");
+    $pit->search(array("Keywords" => "the fast and the furious"));
+
+
+happy trails!
