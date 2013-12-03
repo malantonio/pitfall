@@ -79,9 +79,21 @@ class Pitfall {
         "DetailPageURL"
     );
 
-    /////////////
-    // Methods //
-    /////////////
+
+    /**
+     *  Skip
+     *  ----
+     *  an associative array of fields => values to skip over
+     *  ~~ TODO: would be better suited w/ three options: field, operator, value
+     *  ~~ ex: ["Price", "<", 7.99]
+     */
+
+    static $skip = array(
+        "ProductGroup" => "eBooks",
+        "ProductTypeName" => "DOWNLOADABLE_MOVIE",
+        "Price" => ""
+    );
+
 
     /**
      *  search:
@@ -96,7 +108,7 @@ class Pitfall {
 
     static function search($terms = array(), $searchIndex = "Books") {
         
-        $url = Pitfall::buildSearchURL($terms, $searchIndex);
+        $url = self::buildSearchURL($terms, $searchIndex);
 
         $results = file_get_contents($url);
         $xml = new SimpleXMLElement($results);
@@ -109,18 +121,16 @@ class Pitfall {
 
             $item = $xml->{'Items'}->{'Item'}[$n];
 
-            // we're not interested in eBooks or downloadable movies, so we'll skip over those entries
-            // (note for future self: have this be a public var, like $this->skip)
-            if ( 
-                Pitfall::traverse("ProductGroup", $item) == "eBooks"
-                || Pitfall::traverse("ProductTypeName", $item) == "DOWNLOADABLE_MOVIE"
-                || Pitfall::traverse("Price", $item) == ""
-            ) { 
-                continue; 
+            if (!empty(self::$skip)) {
+                foreach(self::$skip as $field => $value) {
+                    if (self::traverse($field, $item) == $value) {
+                        continue;
+                    }
+                }
             }
 
             // go through each field in our array and traverse the item out of there
-            foreach(Pitfall::$fields as $field) {
+            foreach(self::$fields as $field) {
                 $final[$i][$field] = Pitfall::traverse($field, $item);
             }
             // move the $final array counter ahead
@@ -142,14 +152,14 @@ class Pitfall {
 
     private static function buildSearchURL($terms, $searchIndex) {
         $query = array(
-            "AssociateTag" => Pitfall::$associateId,
-            "AWSAccessKeyId" => Pitfall::$publicKey,
+            "AssociateTag" => self::$associateId,
+            "AWSAccessKeyId" => self::$publicKey,
             "Operation" => "ItemSearch",
-            "ResponseGroup" => Pitfall::$responseGroup,
+            "ResponseGroup" => self::$responseGroup,
             "SearchIndex" => $searchIndex,
             "Service" => "AWSECommerceService",
             "Timestamp" => rawurlencode(gmdate('Y-m-d\TH:i:s\Z')),
-            "Version" => Pitfall::$version
+            "Version" => self::$version
         );
 
         // we'll push each search term into the query array
@@ -159,7 +169,7 @@ class Pitfall {
 
         //sort the array before breaking up the signature
         ksort($query);
-        $signature = Pitfall::buildSignature($query);
+        $signature = self::buildSignature($query);
         
         foreach($query as $k => $v) {
             $queryString .= $k . "=" . $v . "&";
@@ -167,7 +177,7 @@ class Pitfall {
 
         $queryString = substr($queryString, 0, -1);
 
-        return Pitfall::$baseURL . $queryString . "&Signature=" . $signature;
+        return self::$baseURL . $queryString . "&Signature=" . $signature;
     }
 
     /**
@@ -186,7 +196,7 @@ class Pitfall {
 
         $sigString = substr($sigString, 0, -1);
 
-        return rawurlencode(base64_encode(hash_hmac('sha256', $sigString, Pitfall::$privateKey, true)));
+        return rawurlencode(base64_encode(hash_hmac('sha256', $sigString, self::$privateKey, true)));
     }
 
 
