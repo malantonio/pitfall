@@ -26,7 +26,7 @@ class Pitfall {
      *  --------------
      *  size of results response (ie. the fields provided)
      *  Pitfall::traverse() uses fields returned from the default, Medium,
-     *  which will be a problem w/ the Small response group
+     *  which might be a problem w/ the Small response group
      */
 
     static $responseGroup = "Medium";
@@ -35,10 +35,9 @@ class Pitfall {
     /**
      *  Version
      *  -------
-     *  haven't had any problems yet with this old version
      */
 
-    static $version = "2010-11-01";
+    static $version = "2011-08-01";
 
     
     /**
@@ -99,10 +98,10 @@ class Pitfall {
      *  search:
      *  -------
      *
-     *      param array @terms => an associative array of search terms
+     *      @param array $terms => an associative array of search terms
      *                            ** keys need to be title-cased **
      *                            (eg: "Keywords" => "calvin and hobbes")
-     *      param string @searchIndex => best suited for the following indicies:
+     *      @param string $searchIndex => best suited for the following indicies:
      *                                  "Books", "DVD", "Music"
      */
 
@@ -121,6 +120,7 @@ class Pitfall {
 
             $item = $xml->{'Items'}->{'Item'}[$n];
 
+            // here we'll skip items that have field/values defined in Pitfall::$skip
             if (!empty(self::$skip)) {
                 foreach(self::$skip as $field => $value) {
                     if (self::traverse($field, $item) == $value) {
@@ -138,7 +138,6 @@ class Pitfall {
         }
 
         return $final;
-
     }
 
 
@@ -147,7 +146,7 @@ class Pitfall {
      *  buildSearchURL:
      *  ---------------
      *  constructs the url to search amazon with
-     *      params @terms & @searchIndex are passed from Pitfall::search
+     *      @params $terms & $searchIndex are passed from Pitfall::search
      */
 
     private static function buildSearchURL($terms, $searchIndex) {
@@ -184,7 +183,7 @@ class Pitfall {
      *  buildSignature:
      *  ---------------
      *  does what it says
-     *      param @array
+     *      @param array $array
      */
 
     private static function buildSignature($array) {
@@ -204,8 +203,8 @@ class Pitfall {
      *  traverse:
      *  ---------
      *  used to parse through a returned item to prune out fields
-     *      param string @field => the field desired
-     *      param object @item  => the item being searched
+     *      @param string $field => the field desired
+     *      @param SimpleXMLElement object $item  => the item being searched
      */
 
     private static function traverse($field, $item) {
@@ -272,6 +271,5 @@ class Pitfall {
         
         return $value;
     }
-
 }
 ?>
