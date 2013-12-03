@@ -14,7 +14,7 @@ define('ASSOCIATE_ID', '');
 ?>
 ```
 
-## Pitfall::search()
+## search()
 
 This takes in an associative array where the key is the scope (eg. "Keywords", "Title", "Author") and the value is the search terms. It also takes in an optional searchIndex (defaults to "Books", others include "DVD", "Music", etc.)
 
@@ -31,12 +31,12 @@ $searchTerms = array("Title" => "the days are just packed", "Author" => "bill wa
 $results = Pitfall::search($searchTerms, $searchIndex);
 ```
 
-## Pitfall::buildSearchURL()
+## buildSearchURL()
 
 If you want to just generate an url to the Amazon xml search results, use `Pitfall::buildSearchUrl($searchTerms, $searchIndex)` (using the same search terms and index vars as `search()`). This does the messy work of generating the search query and signature.
 
 
-## Pitfall vars
+## vars
 
 `Pitfall::$fields` is an array of fields to be returned from the search
 
