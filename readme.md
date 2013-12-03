@@ -14,7 +14,9 @@ define('ASSOCIATE_ID', '');
 ?>
 ```
 
-then call Pitfall's public method: `Pitfall::search()`. This takes in an associative array where the key is the scope (eg. "Keywords", "Title", "Author") and the value is the search terms. It also takes in an optional searchIndex (defaults to "Books", others include "DVD", "Music", etc.)
+## Pitfall::search()
+
+This takes in an associative array where the key is the scope (eg. "Keywords", "Title", "Author") and the value is the search terms. It also takes in an optional searchIndex (defaults to "Books", others include "DVD", "Music", etc.)
 
 [Amazon documentation on search scopes (for ItemSearch) to use](http://docs.aws.amazon.com/AWSECommerceService/latest/DG/ItemSearch.html)
 
@@ -28,6 +30,8 @@ __NOTE:__ when defining the scope or searchIndex, be sure to match the case used
 $searchTerms = array("Title" => "the days are just packed", "Author" => "bill watterson"); 
 $results = Pitfall::search($searchTerms, $searchIndex);
 ```
+
+## Pitfall::buildSearchURL()
 
 If you want to just generate an url to the Amazon xml search results, use `Pitfall::buildSearchUrl($searchTerms, $searchIndex)` (using the same search terms and index vars as `search()`). This does the messy work of generating the search query and signature.
 
