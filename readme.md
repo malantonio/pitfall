@@ -56,6 +56,7 @@ $values = array(
     array("Keywords" => "cat fancy")
 );
 
+$batchResults = Pitfall::batch($values);
 ```
 
 ## vars
