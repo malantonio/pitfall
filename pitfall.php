@@ -141,15 +141,42 @@ class Pitfall {
     }
 
 
+    /**
+     *  batch:
+     *  ------
+     *  takes in an array of values and conducts Pitfall searches with each.
+     * 
+     *      @param array $input
+     */
+
+    static function batch($input) {
+
+        $batchResults = array();
+
+        foreach($input as $item) {
+            
+            // sort-of future proofing: we'll more-than-likely be working with just a set of values,
+            // but we do want to make sure to be nimble enough to accept pre-formatted arrays of searches,
+            // like "Title", "Author", etc.
+
+            $query = !is_array($item) ? array("Keywords" => $item) : $item;
+            $results = Pitfall::search($query);
+            array_push($batchResults, $results);
+        }
+
+        return $batchResults;
+
+    }
+
 
     /**
      *  buildSearchURL:
      *  ---------------
      *  constructs the url to search amazon with
-     *      @params $terms & $searchIndex are passed from Pitfall::search
+     *      @param $terms & @param $searchIndex are passed from Pitfall::search
      */
 
-    private static function buildSearchURL($terms, $searchIndex) {
+    static function buildSearchURL($terms, $searchIndex) {
         $query = array(
             "AssociateTag" => self::$associateId,
             "AWSAccessKeyId" => self::$publicKey,
@@ -163,6 +190,9 @@ class Pitfall {
 
         // we'll push each search term into the query array
         foreach($terms as $key => $value) {
+
+            // if our $value is a 13-digit ISBN number w/ a dash, let's remove the dash
+            $value = preg_match("/\d{3}-\d+/", $value) ? str_replace("-", "", $value) : $value;
             $query[$key] = rawurlencode($value);
         }
 

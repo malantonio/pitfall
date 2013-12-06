@@ -24,7 +24,7 @@ This takes in an associative array where the key is the scope (eg. "Keywords", "
 
 __NOTE:__ when defining the scope or searchIndex, be sure to match the case used by Amazon.
 
-####example
+#### example
 
 ```PHP
 $searchTerms = array("Title" => "the days are just packed", "Author" => "bill watterson"); 
@@ -35,6 +35,28 @@ $results = Pitfall::search($searchTerms, $searchIndex);
 
 If you want to just generate an url to the Amazon xml search results, use `Pitfall::buildSearchUrl($searchTerms, $searchIndex)` (using the same search terms and index vars as `search()`). This does the messy work of generating the search query and signature.
 
+## batch()
+
+Conducts a series of searches from an inputted array, returns results as an associative array
+
+#### example
+
+```PHP
+$values = array(
+    
+    // batch conducts keyword searches of strings
+    "1451660987",
+    "978-1250012579",
+    "0156027607",
+    "moleskine sketchbook"
+
+    // as well as the standard associative array searches
+    array("Title" => "Moon Shot"),
+    array("Author" => "Hali Felt"),
+    array("Keywords" => "cat fancy")
+);
+
+```
 
 ## vars
 
