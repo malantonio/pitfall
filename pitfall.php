@@ -7,9 +7,9 @@ class Pitfall {
      *  unique keys provided by amazon
      */
 
-    static $associateId = ASSOCIATE_ID;
-    static $publicKey = PUBLIC_KEY;
-    static $privateKey = PRIVATE_KEY;
+    static $associateId = AMZ_ASSOCIATE_ID;
+    static $publicKey = AMZ_PUBLIC_KEY;
+    static $privateKey = AMZ_PRIVATE_KEY;
 
 
     /**
@@ -119,15 +119,18 @@ class Pitfall {
         for($n = 0; $n < $count; $n++) {
 
             $item = $xml->{'Items'}->{'Item'}[$n];
+            $skipme = false;
 
             // here we'll skip items that have field/values defined in Pitfall::$skip
             if (!empty(self::$skip)) {
                 foreach(self::$skip as $field => $value) {
                     if (self::traverse($field, $item) == $value) {
-                        continue;
+                        $skipme = true;
                     }
                 }
             }
+
+            if ($skipme) { continue; }            
 
             // go through each field in our array and traverse the item out of there
             foreach(self::$fields as $field) {
