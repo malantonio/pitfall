@@ -8,9 +8,9 @@ Define your Amazon credential variables like so:
 
 ```PHP
 <?php
-define('PUBLIC_KEY', '');
-define('PRIVATE_KEY', '');
-define('ASSOCIATE_ID', '');
+define('AMZ_PUBLIC_KEY', '');
+define('AMZ_PRIVATE_KEY', '');
+define('AMZ_ASSOCIATE_ID', '');
 ?>
 ```
 
