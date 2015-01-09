@@ -242,66 +242,73 @@ class Pitfall {
      */
 
     private static function traverse($field, $item) {
-
-        switch($field) {
-            case "ASIN":            $value = (string) $item->{'ASIN'}; break;
-            case "AudioFormat":     $value = (string) $item->{'ItemAttributes'}->{'AudioFormat'}; break;
-            case "Binding":         $value = (string) $item->{'ItemAttributes'}->{'Binding'}; break;
-            case "Description":     $value = (string) $item->{'EditorialReviews'}->{'EditorialReview'}->{'Content'}; break;
-            case "DetailPageURL":   $value = (string) $item->{'DetailPageURL'}; break;      
-            case "Director":        $value = (string) $item->{'ItemAttributes'}->{'Director'}; break;
-            case "Edition":         $value = (string) $item->{'ItemAttributes'}->{'Edition'}; break;      
-            case "Genre":           $value = (string) $item->{'ItemAttributes'}->{'Genre'}; break;
-            case "ISBN":            $value = (string) $item->{'ItemAttributes'}->{'ISBN'}; break;
-            case "LargeImage":      $value = (string) $item->{'LargeImage'}->{'URL'}; break;
-            case "MediumImage":     $value = (string) $item->{'MediumImage'}->{'URL'}; break;
-            case "NumberOfDiscs":   $value = (string) $item->{'ItemAttributes'}->{'NumberOfDiscs'}; break;
-            case "Publisher":       $value = (string) $item->{'ItemAttributes'}->{'Label'}; break;
-            case "Price":           $value = (string) $item->{'ItemAttributes'}->{'ListPrice'}->{'FormattedPrice'}; break;
-            case "ProductGroup":    $value = (string) $item->{'ItemAttributes'}->{'ProductGroup'}; break;
-            case "ProductTypeName": $value = (string) $item->{'ItemAttributes'}->{'ProductTypeName'}; break;
-            case "RegionCode":      $value = (string) $item->{'ItemAttributes'}->{'RegionCode'}; break;
-            case "ReleaseDate":     $value = (string) $item->{'ItemAttributes'}->{'ReleaseDate'}; break;
-            case "RunningTime":     $value = (string) $item->{'ItemAttributes'}->{'RunningTime'}; break;
-            case "SmallImage":      $value = (string) $item->{'SmallImage'}->{'URL'}; break;
-            case "Studio":          $value = (string) $item->{'ItemAttributes'}->{'Studio'}; break;
-            case "Title":           $value = (string) $item->{'ItemAttributes'}->{'Title'}; break;
-            case "UPC":             $value = (string) $item->{'ItemAttributes'}->{'UPC'}; break;
-            case "Actor":         
-                $value = array();
-                $count = count($item->{'ItemAttributes'}->{'Actor'});
-                
-                for($i = 0; $i < $count; $i++) {
-                    $value[] = (string) $item->{'ItemAttributes'}->{'Actor'}[$i];
-                }
-
-                break;
-          
-            case "Artist":
-            case "Author":
-                $au = $item->{'ItemAttributes'}->{'Author'};
-                $ar = $item->{'ItemAttributes'}->{'Artist'};
-
-                // because it's generally one or the other, we
-                //  can use the non-empty value for the var
-                $a = empty($au) ? $ar : $au;
-
-                if (count($a) > 1) {
+        // some fields are completely missing from the xml tree
+        // (example: pre-ordered items might lack an <EditorialReviews> tag completely)
+        // in that case, we'll return an empty string
+        try {
+            switch($field) {
+                case "ASIN":            $value = (string) $item->{'ASIN'}; break;
+                case "AudioFormat":     $value = (string) $item->{'ItemAttributes'}->{'AudioFormat'}; break;
+                case "Binding":         $value = (string) $item->{'ItemAttributes'}->{'Binding'}; break;
+                case "Description":     $value = (string) $item->{'EditorialReviews'}->{'EditorialReview'}->{'Content'}; break;
+                case "DetailPageURL":   $value = (string) $item->{'DetailPageURL'}; break;      
+                case "Director":        $value = (string) $item->{'ItemAttributes'}->{'Director'}; break;
+                case "Edition":         $value = (string) $item->{'ItemAttributes'}->{'Edition'}; break;      
+                case "Genre":           $value = (string) $item->{'ItemAttributes'}->{'Genre'}; break;
+                case "ISBN":            $value = (string) $item->{'ItemAttributes'}->{'ISBN'}; break;
+                case "LargeImage":      $value = (string) $item->{'LargeImage'}->{'URL'}; break;
+                case "MediumImage":     $value = (string) $item->{'MediumImage'}->{'URL'}; break;
+                case "NumberOfDiscs":   $value = (string) $item->{'ItemAttributes'}->{'NumberOfDiscs'}; break;
+                case "Publisher":       $value = (string) $item->{'ItemAttributes'}->{'Label'}; break;
+                case "Price":           $value = (string) $item->{'ItemAttributes'}->{'ListPrice'}->{'FormattedPrice'}; break;
+                case "ProductGroup":    $value = (string) $item->{'ItemAttributes'}->{'ProductGroup'}; break;
+                case "ProductTypeName": $value = (string) $item->{'ItemAttributes'}->{'ProductTypeName'}; break;
+                case "RegionCode":      $value = (string) $item->{'ItemAttributes'}->{'RegionCode'}; break;
+                case "ReleaseDate":     $value = (string) $item->{'ItemAttributes'}->{'ReleaseDate'}; break;
+                case "RunningTime":     $value = (string) $item->{'ItemAttributes'}->{'RunningTime'}; break;
+                case "SmallImage":      $value = (string) $item->{'SmallImage'}->{'URL'}; break;
+                case "Studio":          $value = (string) $item->{'ItemAttributes'}->{'Studio'}; break;
+                case "Title":           $value = (string) $item->{'ItemAttributes'}->{'Title'}; break;
+                case "UPC":             $value = (string) $item->{'ItemAttributes'}->{'UPC'}; break;
+                case "Actor":         
                     $value = array();
+                    $count = count($item->{'ItemAttributes'}->{'Actor'});
                     
-                    for($i = 0; $i < count($a); $i++) {
-                        $value[] = (string) $a[$i];
+                    for($i = 0; $i < $count; $i++) {
+                        $value[] = (string) $item->{'ItemAttributes'}->{'Actor'}[$i];
                     }
-                } else {
-                    $value = (string) $a;
-                }
-                
-                break;
+    
+                    break;
+              
+                case "Artist":
+                case "Author":
+                    $au = $item->{'ItemAttributes'}->{'Author'};
+                    $ar = $item->{'ItemAttributes'}->{'Artist'};
+    
+                    // because it's generally one or the other, we
+                    //  can use the non-empty value for the var
+                    $a = empty($au) ? $ar : $au;
+    
+                    if (count($a) > 1) {
+                        $value = array();
+                        
+                        for($i = 0; $i < count($a); $i++) {
+                            $value[] = (string) $a[$i];
+                        }
+                    } else {
+                        $value = (string) $a;
+                    }
+                    
+                    break;
+            }
+    
+            // we're returning strings, so if $value is an array of authors/artists/actors/etc.
+            // we'll smoosh it down
+            if (is_array($value)) { $value = implode(", ", $value); }
+        
+        } catch ( \Exception $e ) {
+            $value = "";
         }
-
-        // we're returning strings, so if $value is an array of authors/artists/actors/etc.
-        // we'll smoosh it down
-        if (is_array($value)) { $value = implode(", ", $value); }
         
         return $value;
     }
