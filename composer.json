@@ -1,4 +1,9 @@
 {
-	"name": "malantonio/pitfall",
-	"version": "1.0.0"
+    "name": "malantonio/pitfall",
+    "version": "1.0.0",
+    "autoload": {
+        "files": [
+            "pitfall.php"
+        ]
+    }
 }
