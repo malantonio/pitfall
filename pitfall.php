@@ -202,6 +202,7 @@ class Pitfall {
         //sort the array before breaking up the signature
         ksort($query);
         $signature = self::buildSignature($query);
+        $queryString = "";
         
         foreach($query as $k => $v) {
             $queryString .= $k . "=" . $v . "&";
